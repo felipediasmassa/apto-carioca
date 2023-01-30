@@ -7,6 +7,9 @@ import time
 
 API_URL = "https://www.quintoandar.com.br/alugar/imovel/rio-de-janeiro-rj-brasil?survey=profiling_survey_rent_v2&survey_origin=home"
 
+HOUSE_CARD_DIV_CLASSES = ["sc-7fnxs3-0", "IUFUB"]
+HOUSE_CARD_A_CLASSES = ["sc-isijxy-0", "fdxHEM"]
+
 
 def get_page_content(api_url):
 
