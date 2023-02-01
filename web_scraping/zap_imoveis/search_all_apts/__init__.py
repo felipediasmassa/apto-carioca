@@ -1,5 +1,6 @@
 import pandas as pd
-import zapimoveis_scraper as zap
+from geopy.geocoders import Nominatim
+import web_scraping.zap_imoveis.scraper as zap
 
 URL_START = "https://www.zapimoveis.com.br"
 
@@ -12,8 +13,10 @@ NUM_PAGES = 5
 ACTION = "rent"  # others = "buy", "release"
 PROPERTY_TYPE = "apartment"  # others = "property", "house"
 
+geolocator = Nominatim(user_agent="geolocalização")
 
-def search_apts(
+
+def search_properties(
     district: str,
     zone: str,
     city: str = "rio-de-janeiro",
@@ -26,15 +29,13 @@ def search_apts(
 
     # Preprocessing parameters:
     str_location = get_location_string(district, zone, city, state)
-    action = map_action(action)
-    property_type = map_property_type(property_type)
 
     # Retrieving all properties objects from search:
-    properties = zap.search(
+    properties = zap.search_zap_imoveis(
         str_location,
         num_pages=num_pages,
-        acao=action,
-        tipo=property_type,
+        action=action,
+        property_type=property_type,
     )
 
     properties_dict = [property.__dict__ for property in properties]
@@ -51,38 +52,24 @@ def search_apts(
 
 def get_location_string(district, zone, city, state):
 
+    """Function to compose location string"""
+
     str_location = f"{state}+{city}+{zone}+{district}"
 
     return str_location
 
 
-def map_action(action):
+def get_coordinates_from_address():
 
-    action_map = {
-        "buy": "venda",
-        "rent": "aluguel",
-        "release": "lancamentos",
-    }
+    location = geolocator.geocode(
+        "Rua Henrique Portugal 107, São Francisco, Niterói, RJ, Brasil - 24360-080"
+    )
+    print(location)
 
-    action = action_map[action]
-
-    return action
+    return
 
 
-def map_property_type(property_type):
-
-    property_type_map = {
-        "property": "imoveis",
-        "apartment": "apartamentos",
-        "house": "casas",
-    }
-
-    property_type = property_type_map[property_type]
-
-    return property_type
-
-
-search_apts(
+search_properties(
     district=DISTRICT,
     zone=ZONE,
     city=CITY,
