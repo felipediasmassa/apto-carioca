@@ -1,19 +1,22 @@
+import time
+
 import pandas as pd
+
+import pycep_correios as cep
 from geopy.geocoders import Nominatim
+
 import web_scraping.zap_imoveis.scraper as zap
+
 
 URL_START = "https://www.zapimoveis.com.br"
 
-STATE = "rj"
-CITY = "rio-de-janeiro"
-ZONE = "zona-sul"
-DISTRICT = "botafogo"
+STATE, CITY, ZONE, DISTRICT = "rj", "rio-de-janeiro", "zona-sul", "botafogo"
 
-NUM_PAGES = 5
+NUM_PAGES = None
 ACTION = "rent"  # others = "buy", "release"
 PROPERTY_TYPE = "apartment"  # others = "property", "house"
 
-geolocator = Nominatim(user_agent="geolocalização")
+GEOLOCATOR = Nominatim(user_agent="webscraper")
 
 
 def search_properties(
@@ -21,10 +24,11 @@ def search_properties(
     zone: str,
     city: str = "rio-de-janeiro",
     state: str = "rj",
-    num_pages: int = 5,
+    num_pages=None,
     action: str = "rent",
     property_type: str = "apartment",
     url_start: str = "https://www.zapimoveis.com.br",
+    dictionary_out: bool = False,
 ):
 
     # Preprocessing parameters:
@@ -36,14 +40,20 @@ def search_properties(
         num_pages=num_pages,
         action=action,
         property_type=property_type,
+        dictionary_out=dictionary_out,
     )
 
     properties_dict = [property.__dict__ for property in properties]
 
     df_properties = pd.DataFrame(properties_dict)
-    print(df_properties)
 
     df_properties["full_link"] = url_start + df_properties["link"]
+
+    df_properties["lat lon"] = df_properties["address_zip_code"].apply(
+        get_coordinates_from_address
+    )
+
+    print(df_properties["lat lon"])
 
     df_properties.to_excel("output.xlsx")
 
@@ -59,14 +69,27 @@ def get_location_string(district, zone, city, state):
     return str_location
 
 
-def get_coordinates_from_address():
+def get_coordinates_from_address(zip_code):
 
-    location = geolocator.geocode(
-        "Rua Henrique Portugal 107, São Francisco, Niterói, RJ, Brasil - 24360-080"
-    )
-    print(location)
+    """"""
 
-    return
+    #
+    address = cep.get_address_from_cep(zip_code)
+
+    street = f"{address['logradouro'][0]}. {address['logradouro'][3:]}"
+    district = address["bairro"]
+    city = address["cidade"]
+
+    loc = GEOLOCATOR.geocode(f"{street}, {district}-{city}")
+
+    print(loc)
+
+    time.sleep(5)
+
+    if not loc:
+        return None
+
+    return loc.latitude, loc.longitude
 
 
 search_properties(

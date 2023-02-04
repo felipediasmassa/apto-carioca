@@ -2,6 +2,7 @@
 
 import json
 import time
+import math
 
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
@@ -56,108 +57,70 @@ def get_zap_property(listing):
     # Loading empty item:
     item = ZapProperty()
 
-    print(listing["listing"])
+    # Preprocessing:
+    listing_key = listing.get("listing", {})
+    link_key = listing.get("link", {})
+    address = listing_key.get("address", {})
+    address_coordinates = address.get("point", {})
+    pricing_infos = listing_key.get("pricingInfos", {})
+    if pricing_infos:
+        pricing_infos = pricing_infos[0]
+        rental_info = pricing_infos.get("rentalInfo", {})
+    else:
+        rental_info = {}
 
     # General:
-    item.id = listing["listing"]["id"]
-    item.short_description = listing["link"]["name"]
-    item.title = listing["listing"]["title"]
-    item.description = listing["listing"]["description"]
-    item.unit_types = listing["listing"]["unitTypes"]
-    item.created_at = listing["listing"]["createdAt"]
-    item.updated_at = listing["listing"]["updatedAt"]
-    item.link = listing["link"]["href"]
-    item.status = listing["listing"]["status"]
-    item.images = listing["listing"]["images"]
+    item.id = listing_key.get("id")
+    item.short_description = link_key.get("name")
+    item.title = listing_key.get("title")
+    item.description = listing_key.get("description")
+    item.unit_types = listing_key.get("unitTypes")
+    item.created_at = listing_key.get("createdAt")
+    item.updated_at = listing_key.get("updatedAt")
+    item.link = link_key.get("href")
+    item.status = listing_key.get("status")
+    item.images = listing_key.get("images")
 
     # Address:
-    item.address_country = listing["listing"]["address"]["country"]
-    item.address_city = listing["listing"]["address"]["city"]
-    item.address_zone = listing["listing"]["address"]["zone"]
-    item.address_district = listing["listing"]["address"]["district"]
-    item.address_neighborhood = listing["listing"]["address"]["neighborhood"]
-    item.address_street = listing["listing"]["address"]["street"]
-    item.address_street_number = listing["listing"]["address"]["streetNumber"]
-    item.address_zip_code = listing["listing"]["address"]["zipCode"]
-    item.address_level = listing["listing"]["address"]["level"]
-    item.address_longitude = listing["listing"]["address"]["point"]["lon"]
-    item.address_latitude = listing["listing"]["address"]["point"]["lat"]
+    item.address_country = address.get("country")
+    item.address_city = address.get("city")
+    item.address_zone = address.get("zone")
+    item.address_district = address.get("district")
+    item.address_neighborhood = address.get("neighborhood")
+    item.address_street = address.get("street")
+    item.address_street_number = address.get("streetNumber")
+    item.address_zip_code = address.get("zipCode")
+    item.address_level = address.get("level")
+    item.address_longitude = address_coordinates.get("lon")
+    item.address_latitude = address_coordinates.get("lat")
 
     # Pricing:
-    item.pricing_business_type = listing["listing"]["pricingInfos"][0]["businessType"]
-    item.pricing_period = listing["listing"]["pricingInfos"][0]["rentalInfo"]["period"]
-    item.pricing_rent = listing["listing"]["pricingInfos"][0]["price"]
-    item.pricing_monthly_condo_fee = listing["listing"]["pricingInfos"][0][
-        "monthlyCondoFee"
-    ]
-    item.pricing_yearly_iptu = listing["listing"]["pricingInfos"][0]["yearlyIptu"]
-    item.pricing_monthly_total = listing["listing"]["pricingInfos"][0]["rentalInfo"][
-        "monthlyRentalTotalPrice"
-    ]
+    item.pricing_business_type = pricing_infos.get("businessType")
+    item.pricing_period = rental_info.get("period")
+    item.pricing_rent = pricing_infos.get("price")
+    item.pricing_monthly_condo_fee = pricing_infos.get("monthlyCondoFee")
+    item.pricing_yearly_iptu = pricing_infos.get("yearlyIptu")
+    item.pricing_monthly_total = rental_info.get("monthlyRentalTotalPrice")
 
     # Quantitative features:
-    item.total_area_m2 = listing["listing"]["usableAreas"]
-    item.num_bedrooms = listing["listing"]["bedrooms"]
-    item.num_bathrooms = listing["listing"]["bathrooms"]
-    item.parking_spaces = listing["listing"]["parkingSpaces"]
-    item.floors = listing["listing"]["floors"]
-    item.unit_floor = listing["listing"]["unitFloor"]
+    item.total_area_m2 = listing_key.get("usableAreas")
+    item.num_bedrooms = listing_key.get("bedrooms")
+    item.num_bathrooms = listing_key.get("bathrooms")
+    item.parking_spaces = listing_key.get("parkingSpaces")
+    item.floors = listing_key.get("floors")
+    item.unit_floor = listing_key.get("unitFloor")
 
     # Qualitative_features:
-    item.listing_type = listing["listing"]["listingType"]
-    item.amenities = listing["listing"]["amenities"]
-    item.points_of_interest = listing["listing"]["address"]["poisList"]
-
-    """
-    item.link = listing["link"]["href"]
-    item.price = (
-        listing["listing"]["pricingInfos"][0].get("price", None)
-        if len(listing["listing"]["pricingInfos"]) > 0
-        else 0
-    )
-    item.condo_fee = (
-        listing["listing"]["pricingInfos"][0].get("monthlyCondoFee", None)
-        if len(listing["listing"]["pricingInfos"]) > 0
-        else 0
-    )
-    item.bedrooms = (
-        listing["listing"]["bedrooms"][0]
-        if len(listing["listing"]["bedrooms"]) > 0
-        else 0
-    )
-    item.bathrooms = (
-        listing["listing"]["bathrooms"][0]
-        if len(listing["listing"]["bathrooms"]) > 0
-        else 0
-    )
-    item.vacancies = (
-        listing["listing"]["parkingSpaces"][0]
-        if len(listing["listing"]["parkingSpaces"]) > 0
-        else 0
-    )
-    item.total_area_m2 = (
-        listing["listing"]["usableAreas"][0]
-        if len(listing["listing"]["usableAreas"]) > 0
-        else 0
-    )
-    item.address = (
-        (
-            listing["link"]["data"]["street"]
-            + ", "
-            + listing["link"]["data"]["neighborhood"]
-        )
-        .strip(",")
-        .strip()
-    )
-    item.description = listing["listing"]["title"]
-    """
+    item.listing_type = listing_key.get("listingType")
+    item.amenities = listing_key.get("amenities")
+    item.points_of_interest = address.get("poisList")
 
     return item
 
 
 def search_zap_imoveis(
     str_location,
-    num_pages=1,
+    num_pages=None,
     action="rent",
     property_type="apartment",
     dictionary_out=False,
@@ -172,7 +135,15 @@ def search_zap_imoveis(
     action = utils.convert_action(action)
     property_type = utils.convert_property_type(property_type)
 
-    while page <= num_pages:
+    old_len, new_len = -1, 0  # initializing old_len with -1 to start while loop
+
+    if not num_pages:
+        num_pages = math.inf  # setting number of pages to infinity if not passed
+
+    while page <= num_pages and old_len < new_len:
+
+        # Calculating length of retrieved properties list at start of iteration:
+        old_len = len(properties)
 
         # Composing url given parameters:
         url_search = "https://www.zapimoveis.com.br/"
@@ -198,6 +169,9 @@ def search_zap_imoveis(
         # Incrementing page and sleeping until content loads:
         page += 1
         time.sleep(time_to_wait)
+
+        # Calculating length of retrieved properties list at end of iteration:
+        new_len = len(properties)
 
     # Returning data as dictionary, if requested:
     if dictionary_out:
