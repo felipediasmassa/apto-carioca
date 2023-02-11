@@ -1,0 +1,23 @@
+adaptar codigo para rodar todos os bairros (passar lista de bairros)
+
+rodar codigo todos os dias localmente para o rj inteiro e empilhar resultados em planilha
+
+escrever resultados em banco de dados
+
+aplicar modelo de ml para predicao do custo mensal e preço de condo
+
+pegar latitude e longitude de todos os aptos
+
+generalizar para quinto andar
+
+generalizar para vilareal
+
+automatizar rodada do codigo na nuvem
+
+provisionar banco de dados na nuvem
+
+criar frontend para visualizacao geral dos dados
+
+criar frontend para mostrar resultados de modelo de ML
+
+criar frontend para mostrar evolucao temporal dos preços

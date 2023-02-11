@@ -49,11 +49,10 @@ def search_properties(
 
     df_properties["full_link"] = url_start + df_properties["link"]
 
-    df_properties["lat lon"] = df_properties["address_zip_code"].apply(
-        get_coordinates_from_address
-    )
-
-    print(df_properties["lat lon"])
+    # df_properties["lat lon"] = df_properties["address_zip_code"].apply(
+    #    get_coordinates_from_address
+    # )
+    # print(df_properties["lat lon"])
 
     df_properties.to_excel("output.xlsx")
 
