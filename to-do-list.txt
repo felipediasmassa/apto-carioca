@@ -21,3 +21,5 @@ criar frontend para visualizacao geral dos dados
 criar frontend para mostrar resultados de modelo de ML
 
 criar frontend para mostrar evolucao temporal dos preços
+
+arrumar fonte de dados para avaliacao da vizinhança (melhores areas, piores areas)
