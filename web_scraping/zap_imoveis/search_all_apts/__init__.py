@@ -1,3 +1,6 @@
+"""Module with functions to scrape data from Zap Imóveis based on search parameters"""
+
+import os
 import time
 
 import pandas as pd
@@ -31,6 +34,8 @@ def search_properties(
     dictionary_out: bool = False,
 ):
 
+    """"""
+
     # Preprocessing parameters:
     str_location = get_location_string(district, zone, city, state)
 
@@ -55,6 +60,10 @@ def search_properties(
     # print(df_properties["lat lon"])
 
     df_properties.to_excel("output.xlsx")
+
+    df_properties.to_json(
+        os.path.join(os.path.dirname(__file__), "df_properties.json"), orient="records"
+    )
 
     return properties_dict
 

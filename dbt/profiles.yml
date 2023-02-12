@@ -1,0 +1,39 @@
+default:
+    outputs:
+        local:
+            type: postgres
+            host: localhost
+            user: postgres
+            password: pnl360_password
+            port: 11180
+            dbname: postgres
+            schema: my_carioca_home
+            threads: 4
+        dev:
+            type: postgres
+            host: localhost
+            user: postgres # change for dev
+            password: pnl360_password # change for dev
+            port: 11180
+            dbname: postgres # change for dev
+            schema: my_carioca_home # change for dev
+            threads: 4
+        demo:
+            type: postgres
+            host: localhost
+            user: postgres # change for demo
+            password: pnl360_password # change for demo
+            port: 11180
+            dbname: postgres # change for demo
+            schema: my_carioca_home # change for demo
+            threads: 4
+        prod:
+            type: postgres
+            host: localhost
+            user: postgres # change for prod
+            password: pnl360_password # change for prod
+            port: 11180
+            dbname: postgres # change for prod
+            schema: my_carioca_home # change for prod
+            threads: 4
+    target: local

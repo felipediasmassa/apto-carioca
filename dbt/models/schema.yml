@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+    - name: my_carioca_home
+      database: postgres
+      schema: my_carioca_home
+      description: Linked to my_carioca_home database in postgres
+      tables:
+          - name: apt_data
+            description: apt_data
+
+            # - name: information_schema # This is the source schema
+    #   description: Views describing the contents of schemas in this database
+    #   tables: # These are the source tables
+    #     - name: tables
+    #       description: The tables defined in this database that are accessible to the current user's role.
+    #       columns:
+    #         - name: table_schema
+    #           description: Schema that the table belongs to
+    #           tests: # You can test your sources
+    #             - not_null
+    #         - name: Name of the table
+    #     - name: views
+    #       description: The views defined in this database that are accessible to the current user's role.
+    #       # You do not have to list, describe and test all your sources columns, but it is a good practice to do so.
+#models:
+#  - name: another_dbt_model
+#    description: "Another starter dbt model"
+
+#exposures:
+#  - name: my_app
+#    type: application
+#    maturity: high
+#    url: https://my-app.technipfmc.com
+#    description: This is my cool app that relies on snowflake data.
+#    depends_on:
+#      - ref('another_dbt_model')
+#    owner:
+#      name: App Owner
+#      email: app.owner@technipfmc.com
+
+#metrics:
+#  - name: my_metric
+#    label: My Metric
+#    model: ref('another_dbt_model')
+#    description: This is my insightful metric
+#    type: count
+#    sql: case when col > 0 then 'paid' else 'free' end # sql snippet to demonstrate logic, but shown as an example, it is not really used
+#    timestamp: date_col
+#    time_grains: [day, week, month]

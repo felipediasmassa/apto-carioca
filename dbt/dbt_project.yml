@@ -1,0 +1,50 @@
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: "my_carioca_home"
+version: "1.0.0"
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: "default"
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target" # directory which will store compiled SQL files
+clean-targets: # directories to be removed by `dbt clean`
+    - "target"
+    - "dbt_packages"
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# You do not have to define every model. If you omit it, it will be materialized by default.
+# See https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations for more information on materializations.
+
+# You can set a custom schema and custom database with the keys schema and database.
+
+# In this example config, we tell dbt to build all models in the example/ directory
+# as tables. These settings can be overridden in the individual model files
+# using the `{{ config(...) }}` macro.
+
+#models:
+#  replace_name:  # Replace with your project name.
+#   another_dbt_model:
+#     alias: another_dbt_model_alias # Override the default name
+# Config indicated by + and applies to all files under models/example/
+#  example:
+#   +materialized: view
+
+# Runs before starting your run
+on-run-start:
+    - "{{ create_apt_data_tables('postgres', 'my_carioca_home') }}"
+# # Runs after you run is complete successfully.
+# on-run-end:
+#   - '{{ something() }}'
