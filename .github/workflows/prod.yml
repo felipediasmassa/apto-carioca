@@ -1,0 +1,13 @@
+name: Prod
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    prod:
+        uses: ./.github/workflows/deploy-stack.yml
+        with:
+            stage: prod
+        secrets: inherit

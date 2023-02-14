@@ -1,0 +1,60 @@
+name: Testing
+
+on:
+    pull_request:
+        branches:
+            - main
+            - release**
+            - dev
+            - dev**
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    testing:
+        runs-on: ubuntu-latest
+
+        # strategy:
+        #     fail-fast: false
+        #     matrix:
+        #         dir:
+        #             - module1
+
+        env:
+            REGION: eu-west-1
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Install Serverless Framework
+              run: |
+                  npm install -g serverless@3
+
+            - name: Install Serverless Better Credentials Plugin
+              run: |
+                  npm install serverless-better-credentials
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  role-to-assume: ${{ secrets.DEPLOY_ROLE }}
+                  role-session-name: GitHubActions
+                  aws-region: ${{env.REGION}}
+
+            - name: Set up Python 3.9
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+
+            - name: Install Dependencies
+              run: |
+                  pip install --upgrade pip wheel pytest
+                  if [ -e requirements-test.txt ]; then pip install -r requirements-test.txt; fi
+                  if [ -e requirements.txt ]; then pip install -r requirements.txt; fi
+                  if [ -e requirements-module1.txt ]; then pip install -r requirements-module1.txt; fi
+
+            - name: Test with Pytest
+              run: pytest ${{ matrix.dir }} --log-cli-level=INFO

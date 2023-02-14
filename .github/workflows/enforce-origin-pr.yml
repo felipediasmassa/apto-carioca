@@ -1,0 +1,15 @@
+name: Enforce PR Origin
+on:
+  pull_request_target:
+    types:
+      - opened
+    branches:
+      - main
+
+jobs:
+  fail_if_not_release_or_hotfix:
+    if: ${{ ! startsWith(github.head_ref, 'release') && ! startsWith(github.head_ref, 'hotfix') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if source branch is not match release or hotfix
+        run: exit 1

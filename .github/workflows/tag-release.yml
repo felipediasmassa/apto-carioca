@@ -1,0 +1,25 @@
+name: Tag Release
+on:
+    pull_request_target:
+        types:
+            - closed
+        branches:
+            - main
+
+jobs:
+    tag_if_merged:
+        if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release')
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.ADMIN_TOKEN }}
+
+            - name: Bump version and push tag
+              id: tag_version
+              uses: mathieudutour/github-tag-action@v6.1
+              with:
+                  github_token: ${{ secrets.ADMIN_TOKEN }}
+                  default_bump: minor
