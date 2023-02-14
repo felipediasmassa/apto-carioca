@@ -7,14 +7,9 @@ import math
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 
-from web_scraping.zap_imoveis.scraper.property import ZapProperty
-import web_scraping.zap_imoveis.scraper.utils as utils
+from web_scraping.zap_imoveis.search_all_apts.scraper.property import ZapProperty
+from web_scraping.zap_imoveis.search_all_apts.scraper import utils
 
-
-__all__ = [
-    # Main search function.
-    "search",
-]
 
 # Default user agent, unless instructed by the user to change it:
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"

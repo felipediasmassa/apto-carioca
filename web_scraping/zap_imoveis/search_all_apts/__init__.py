@@ -8,7 +8,7 @@ import pandas as pd
 import pycep_correios as cep
 from geopy.geocoders import Nominatim
 
-import web_scraping.zap_imoveis.scraper as zap
+import web_scraping.zap_imoveis.search_all_apts.scraper as zap
 
 
 URL_START = "https://www.zapimoveis.com.br"
