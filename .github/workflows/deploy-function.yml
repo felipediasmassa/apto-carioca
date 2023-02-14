@@ -1,0 +1,72 @@
+name: Deploy Function
+
+on:
+    workflow_call:
+        inputs:
+            stage:
+                required: true
+                type: string
+            function:
+                required: true
+                type: string
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        env:
+            REGION: eu-west-1
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Get node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "16.x"
+
+            - name: Install Serverless Framework
+              run: |
+                  npm install -g serverless@3
+
+            - name: Install Serverless Better Credentials Plugin
+              run: |
+                  npm install serverless-better-credentials
+
+            # - name: Configure AWS credentials
+            #   uses: aws-actions/configure-aws-credentials@v1
+            #   with:
+            #       role-to-assume: ${{ secrets.DEPLOY_ROLE }}
+            #       role-session-name: GitHubActions
+            #       aws-region: ${{env.REGION}}
+
+            - name: Prepare python
+              run: pip install --upgrade pip wheel
+
+            - name: Create Module 1 Layer
+              run: |
+                  mkdir python
+                  pip install \
+                    --platform manylinux2014_x86_64 \
+                    --implementation cp \
+                    --python 3.9 \
+                    --only-binary=:all: \
+                    --target=python \
+                    -r requirements-module1.txt
+                  zip -r layer_module1.zip python/
+                  rm -r python
+
+            - name: Check code complexity metrics
+              run: |
+                  pip install wily
+                  wily build .
+                  wily report .
+                  wily rank
+
+            # - name: Deploy Lambda Function
+            #   run: sls deploy function --function ${{ inputs.function }} --stage ${{ inputs.stage }}

@@ -1,0 +1,26 @@
+name: Dev // Module 1
+
+on:
+    push:
+        branches:
+            - dev-**module1**
+        paths:
+            - module1/**
+            - serverless.yml
+            - .github/workflows/dev-module-1.yml
+            - utils/**
+
+jobs:
+    dev-function1:
+        uses: ./.github/workflows/deploy-function.yml
+        with:
+            stage: dev
+            function: module1_function1
+        secrets: inherit
+
+    dev-function2:
+        uses: ./.github/workflows/deploy-function.yml
+        with:
+            stage: dev
+            function: module1_function2
+        secrets: inherit
