@@ -11,6 +11,8 @@ from geopy.geocoders import Nominatim
 import web_scraping.zap_imoveis.search_all_apts.scraper as zap
 
 
+THIS_DIR = os.path.dirname(__file__)
+
 URL_START = "https://www.zapimoveis.com.br"
 
 STATE, CITY, ZONE, DISTRICT = "rj", "rio-de-janeiro", "zona-sul", "botafogo"
@@ -59,11 +61,8 @@ def search_properties(
     # )
     # print(df_properties["lat lon"])
 
-    df_properties.to_excel("output.xlsx")
-
-    df_properties.to_json(
-        os.path.join(os.path.dirname(__file__), "df_properties.json"), orient="records"
-    )
+    df_properties.to_excel(os.path.join(THIS_DIR, "searched.xlsx"))
+    df_properties.to_json(os.path.join(THIS_DIR, "searched.json"), orient="records")
 
     return properties_dict
 
