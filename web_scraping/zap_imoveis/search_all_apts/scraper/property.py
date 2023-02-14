@@ -6,7 +6,7 @@ class ZapProperty:
     """Class to receive property data"""
 
     # General:
-    id = None
+    apt_id = None
     short_description = None
     title = None
     description = None

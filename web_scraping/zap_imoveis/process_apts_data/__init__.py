@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-JSON_PATH = "web_scraping/zap_imoveis/search_all_apts/df_properties.json"
+JSON_PATH = "web_scraping/zap_imoveis/search_all_apts/searched.json"
 THIS_DIR = os.path.dirname(__file__)
 
 
@@ -17,7 +17,7 @@ def process_apts_data(json_path):
     df_properties = pd.read_json(json_path)
 
     # General data:
-    df_properties["id"] = convert_datatype(df_properties["id"], float)
+    df_properties["apt_id"] = convert_datatype(df_properties["apt_id"], float)
     df_properties["short_description"] = convert_datatype(
         df_properties["short_description"], str
     )
@@ -135,7 +135,8 @@ def process_apts_data(json_path):
     df_properties["full_link"] = convert_datatype(df_properties["full_link"], str)
 
     df_properties.to_json(os.path.join(THIS_DIR, "processed.json"), orient="records")
-    df_properties.to_excel(os.path.join(THIS_DIR, "processed.xlsx"))
+    df_properties.to_excel(os.path.join(THIS_DIR, "processed.xlsx"), index=False)
+    df_properties.to_csv(os.path.join(THIS_DIR, "processed.csv"), index=False)
 
     return df_properties
 

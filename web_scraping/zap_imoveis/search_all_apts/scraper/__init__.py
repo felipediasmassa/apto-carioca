@@ -65,7 +65,7 @@ def get_zap_property(listing):
         rental_info = {}
 
     # General:
-    item.id = listing_key.get("id")
+    item.apt_id = listing_key.get("id")
     item.short_description = link_key.get("name")
     item.title = listing_key.get("title")
     item.description = listing_key.get("description")

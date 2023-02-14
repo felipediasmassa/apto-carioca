@@ -1,4 +1,5 @@
 {% macro create_apt_data_tables(db_name, schema_name) %}
+
 DROP TABLE
   IF EXISTS {{ db_name }}.{{ schema_name }}.APT_DATA CASCADE;
 
